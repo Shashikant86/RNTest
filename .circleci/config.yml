@@ -9,28 +9,47 @@ jobs:
 
       - run: npm install
 
-      - run: sudo npm install appium 
-
-      - run: appium > /dev/null 2>&1
-
       - save_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
           paths:
             - node_modules
 
-      - run:
-          name: Appium tests
-          command: |
-            node Appium.js
 
       - persist_to_workspace:
           root: ~/RNTest
           paths:
             - node_modules
 
+  android:
+    working_directory: ~/RNTest/android
+    docker:
+      - image: circleci/android:api-27-node8-alpha
+    steps:
+      - checkout:
+          path: ~/RNTest
+
+      - attach_workspace:
+          at: ~/RNTest
+
+      
+      - run:
+          name: Start Appium
+          command: |
+            node_modules/.bin/appium > /dev/null 2>&1
+
+      - run:
+          name: Run Appium Test 
+          command: |
+            node Appium.js      
+
+  
+
 workflows:
   version: 2
   node-android-ios:
     jobs:
       - node
+      - android:
+          requires:
+            - node
       
