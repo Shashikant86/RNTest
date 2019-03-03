@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
 
-      - run: node install
+      - run: npm install
 
       - save_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
